@@ -1,0 +1,8 @@
+diff --git a/library/std/src/lib.rs b/library/std/src/lib.rs
+--- a/library/std/src/lib.rs
++++ b/library/std/src/lib.rs
+@@ -1,3 +1,4 @@
++#![feature(rustc_private)]
+ //! # The Rust Standard Library
+ //!
+ //! The Rust Standard Library is the foundation of portable Rust software, a

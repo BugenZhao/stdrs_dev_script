@@ -1,0 +1,11 @@
+{
+    "search.exclude": {
+        "rust/**": true
+    },
+    "git.repositoryScanIgnoredFolders": [
+        "rust/**"
+    ],
+    "files.exclude": {
+        "rust/**": true
+    }
+}
