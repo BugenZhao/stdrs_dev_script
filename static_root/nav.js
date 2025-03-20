@@ -64,7 +64,7 @@ function url_pop_args(url) {
     let hash = url.indexOf('#');
     let sep = qstn >= 0 && hash >= 0 ? Math.min(qstn, hash)
         : qstn >= 0 ? qstn
-        : hash;
+            : hash;
     let args = sep >= 0 ? url.substring(sep) : "";
     url = sep >= 0 ? url.substring(0, sep) : url;
     return { url, args };
@@ -96,11 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
     location.parentElement.insertBefore(target_select, location);
 
     let disclaimer = document.createElement("div");
-    disclaimer.innerHTML = [
-        '<p>&#9888; Internal Docs &#9888;<br>',
-        'Not Public API<br>',
-        '<a href="https://docs.rs/std" style="color:white;text-decoration:underline;">Official Docs Here</a></p>',
-    ].join("");
+    disclaimer.innerHTML = "<p>Target</p>";
     disclaimer.style.cssText = "color:white;background-color:grey;font-weight:bold;text-align:center;word-wrap:break-word;";
     target_select.parentElement.insertBefore(disclaimer, target_select);
 });
