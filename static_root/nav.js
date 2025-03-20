@@ -1,8 +1,8 @@
-var all_targets = {
-    "x86_64-unknown-linux-gnu": "64bit Linux GNU",
-    "x86_64-pc-windows-gnu": "64bit Windows GNU",
-    "x86_64-apple-darwin": "64bit Mac OSX",
-};
+var all_targets = [
+    "x86_64-unknown-linux-gnu",
+    "x86_64-pc-windows-gnu",
+    "aarch64-apple-darwin",
+];
 // Mapping of target OS to /sys/{dir}/
 var sys_map = {
     "windows": "/sys/windows/",
@@ -18,9 +18,9 @@ var os_map = {
 
 function detect_current_target() {
     let url = window.location.href;
-    for (let key in all_targets) {
-        if (url.indexOf("/" + key + "/") >= 0) {
-            return key;
+    for (let target of all_targets) {
+        if (url.indexOf("/" + target + "/") >= 0) {
+            return target;
         }
     }
     console.error("Failed to detect target triple in URL");
@@ -78,19 +78,19 @@ document.addEventListener("DOMContentLoaded", () => {
     let currently_viewed_target = detect_current_target();
     let target_select = document.createElement("select");
     target_select.id = "target_select";
-    for (let key in all_targets) {
+    for (let target of all_targets) {
         let option = document.createElement("option");
-        option.value = key;
-        option.text = all_targets[key];
-        if (key == currently_viewed_target) {
+        option.value = target;
+        option.text = target;
+        if (target == currently_viewed_target) {
             option.selected = true;
-            window.localStorage.setItem('last_viewed_target', key);
+            window.localStorage.setItem('last_viewed_target', target);
         }
         target_select.appendChild(option);
     }
 
     let sidebar = document.getElementsByClassName("sidebar")[0];
-    let location = sidebar.getElementsByClassName("location")[0];
+    let location = sidebar.getElementsByClassName("sidebar-elems")[0];
     target_select.style.cssText = "width:100%;color:black;text-align:center;";
     target_select.onchange = on_target_change;
     location.parentElement.insertBefore(target_select, location);
@@ -101,6 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
         'Not Public API<br>',
         '<a href="https://docs.rs/std" style="color:white;text-decoration:underline;">Official Docs Here</a></p>',
     ].join("");
-    disclaimer.style.cssText = "color:white;background-color:red;font-weight:bold;text-align:center;word-wrap:break-word;";
+    disclaimer.style.cssText = "color:white;background-color:grey;font-weight:bold;text-align:center;word-wrap:break-word;";
     target_select.parentElement.insertBefore(disclaimer, target_select);
 });
