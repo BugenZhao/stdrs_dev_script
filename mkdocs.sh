@@ -3,6 +3,7 @@
 set -euo pipefail
 
 targets=(x86_64-unknown-linux-gnu x86_64-pc-windows-gnu aarch64-apple-darwin)
+# targets=(x86_64-unknown-linux-gnu)
 out_dir=html
 rust_dir=rust
 init_only=false
@@ -71,6 +72,7 @@ check_prereqs
 rustup toolchain install nightly --profile minimal -c cargo -c rustc -c rust-docs
 rustup target add "${targets[@]}"
 rustc_hash="$(rustc +nightly -vV | rg '^commit-hash: (.+)$' --replace '$1')"
+rustc_version="$(rustc +nightly -vV | rg '^rustc (.+) \((.+) (.+)\)$' --replace '$1-$2-$3')"
 
 [ -e "$rust_dir" ]      || mkdir -p "$rust_dir"
 [ -d "$rust_dir/.git" ] || git clone https://github.com/rust-lang/rust "$rust_dir" --depth 1
@@ -89,7 +91,7 @@ if "$init_only"; then exit 0; fi
 html_in_header=$(realpath 'in-head.html')
 # --generate-link-to-definition causes errors currently (and has been for a while - need to file an issue and investigate)
 rustdoc_unstable_flags=(-Z unstable-options --document-hidden-items) # --generate-link-to-definition)
-rustdoc_stable_flags=(--document-private-items --crate-version "${rustc_hash:0:7}" --html-in-header "$html_in_header")
+rustdoc_stable_flags=(--document-private-items --crate-version "$rustc_version" --html-in-header "$html_in_header")
 export RUSTDOCFLAGS="${rustdoc_stable_flags[*]} ${rustdoc_unstable_flags[*]}"
 export RUSTFLAGS="-Z force-unstable-if-unmarked --check-cfg=cfg(bootstrap)"
 
@@ -108,7 +110,7 @@ mkdir -p "$out_dir/nightly"
 cp static_root/* "$out_dir"/
 for target in "${targets[@]}"; do
     cp -r "$rust_dir/target/$target/doc" "$out_dir/nightly/$target"
-    printf "Updated: $(date -u)\nHash: %s" "$rustc_hash" > "$out_dir/nightly/$target/meta.txt"
+    printf "Updated: $(date -u)\nVersion: %s" "$rustc_hash" > "$out_dir/nightly/$target/meta.txt"
 done
 if "$clean"; then rm -rf "${rust_dir:?}"/target; fi
 echo "All done!"
